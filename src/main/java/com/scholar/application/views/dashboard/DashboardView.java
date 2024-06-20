@@ -1,7 +1,6 @@
 package com.scholar.application.views.dashboard;
 
 
-import com.scholar.application.views.dashboard.ServiceHealth.Status;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.board.Board;
 import com.vaadin.flow.component.charts.Chart;
@@ -43,7 +42,7 @@ public class DashboardView extends Main {
         board.addRow(createHighlight("Current users", "745", 33.7), createHighlight("View events", "54.6k", -112.45),
                 createHighlight("Conversion rate", "18%", 3.9), createHighlight("Custom metric", "-123.45", 0.0));
         board.addRow(createViewEvents());
-        board.addRow(createServiceHealth(), createResponseTimes());
+        board.addRow(createResponseTimes());
         add(board);
     }
 
@@ -121,40 +120,6 @@ public class DashboardView extends Main {
         return viewEvents;
     }
 
-    private Component createServiceHealth() {
-        // Header
-        HorizontalLayout header = createHeader("Service health", "Input / output");
-
-        // Grid
-        Grid<ServiceHealth> grid = new Grid();
-        grid.addThemeVariants(GridVariant.LUMO_NO_BORDER);
-        grid.setAllRowsVisible(true);
-
-        grid.addColumn(new ComponentRenderer<>(serviceHealth -> {
-            Span status = new Span();
-            String statusText = getStatusDisplayName(serviceHealth);
-            status.getElement().setAttribute("aria-label", "Status: " + statusText);
-            status.getElement().setAttribute("title", "Status: " + statusText);
-            status.getElement().getThemeList().add(getStatusTheme(serviceHealth));
-            return status;
-        })).setHeader("").setFlexGrow(0).setAutoWidth(true);
-        grid.addColumn(ServiceHealth::getCity).setHeader("City").setFlexGrow(1);
-        grid.addColumn(ServiceHealth::getInput).setHeader("Input").setAutoWidth(true).setTextAlign(ColumnTextAlign.END);
-        grid.addColumn(ServiceHealth::getOutput).setHeader("Output").setAutoWidth(true)
-                .setTextAlign(ColumnTextAlign.END);
-
-        grid.setItems(new ServiceHealth(Status.EXCELLENT, "Münster", 324, 1540),
-                new ServiceHealth(Status.OK, "Cluj-Napoca", 311, 1320),
-                new ServiceHealth(Status.FAILING, "Ciudad Victoria", 300, 1219));
-
-        // Add it all together
-        VerticalLayout serviceHealth = new VerticalLayout(header, grid);
-        serviceHealth.addClassName(Padding.LARGE);
-        serviceHealth.setPadding(false);
-        serviceHealth.setSpacing(false);
-        serviceHealth.getElement().getThemeList().add("spacing-l");
-        return serviceHealth;
-    }
 
     private Component createResponseTimes() {
         HorizontalLayout header = createHeader("Response times", "Average across all systems");
@@ -201,28 +166,5 @@ public class DashboardView extends Main {
         return header;
     }
 
-    private String getStatusDisplayName(ServiceHealth serviceHealth) {
-        Status status = serviceHealth.getStatus();
-        if (status == Status.OK) {
-            return "Ok";
-        } else if (status == Status.FAILING) {
-            return "Failing";
-        } else if (status == Status.EXCELLENT) {
-            return "Excellent";
-        } else {
-            return status.toString();
-        }
-    }
-
-    private String getStatusTheme(ServiceHealth serviceHealth) {
-        Status status = serviceHealth.getStatus();
-        String theme = "badge primary small";
-        if (status == Status.EXCELLENT) {
-            theme += " success";
-        } else if (status == Status.FAILING) {
-            theme += " error";
-        }
-        return theme;
-    }
 
 }
