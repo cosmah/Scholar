@@ -1,170 +1,95 @@
 package com.scholar.application.views.dashboard;
 
-
-import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.board.Board;
-import com.vaadin.flow.component.charts.Chart;
-import com.vaadin.flow.component.charts.model.*;
-import com.vaadin.flow.component.grid.ColumnTextAlign;
-import com.vaadin.flow.component.grid.Grid;
-import com.vaadin.flow.component.grid.GridVariant;
-import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.Main;
-import com.vaadin.flow.component.html.Span;
-import com.vaadin.flow.component.icon.Icon;
-import com.vaadin.flow.component.icon.VaadinIcon;
-import com.vaadin.flow.component.orderedlayout.FlexComponent;
-import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.component.select.Select;
-import com.vaadin.flow.data.renderer.ComponentRenderer;
-import com.vaadin.flow.router.Menu;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
+import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.html.Span;
+import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.RouteAlias;
-import com.vaadin.flow.theme.lumo.LumoUtility.BoxSizing;
-import com.vaadin.flow.theme.lumo.LumoUtility.FontSize;
-import com.vaadin.flow.theme.lumo.LumoUtility.FontWeight;
-import com.vaadin.flow.theme.lumo.LumoUtility.Margin;
-import com.vaadin.flow.theme.lumo.LumoUtility.Padding;
-import com.vaadin.flow.theme.lumo.LumoUtility.TextColor;
+import com.scholar.application.views.MainLayout;
 
-@PageTitle("Dashboard")
-@Menu(icon = "line-awesome/svg/chart-area-solid.svg", order = 0)
-@Route(value = "")
-@RouteAlias(value = "")
+import java.util.Arrays;
+import java.util.List;
+
+@PageTitle("Dashboard | Scholar Management System")
+@Route(value = "dashboard", layout = MainLayout.class)
+@RouteAlias(value = "", layout = MainLayout.class)
 public class DashboardView extends Main {
 
     public DashboardView() {
-        addClassName("dashboard-view");
+        VerticalLayout layout = new VerticalLayout();
+        layout.setSizeFull();
 
-        Board board = new Board();
-        board.addRow(createHighlight("Current users", "745", 33.7), createHighlight("View events", "54.6k", -112.45),
-                createHighlight("Conversion rate", "18%", 3.9), createHighlight("Custom metric", "-123.45", 0.0));
-        board.addRow(createViewEvents());
-        board.addRow(createResponseTimes());
-        add(board);
+        // Top stats section
+        HorizontalLayout statsLayout = new HorizontalLayout();
+        statsLayout.setWidthFull();
+
+        Div studentCount = createStatsCard("Students", "150");
+        Div courseCount = createStatsCard("Courses", "25");
+        Div recentActivities = createStatsCard("Recent Activities", "5");
+
+        statsLayout.add(studentCount, courseCount, recentActivities);
+
+        // Recent activities section
+        Grid<Activity> activityGrid = new Grid<>(Activity.class);
+        activityGrid.setItems(getRecentActivities());
+
+        layout.add(statsLayout, activityGrid);
+        add(layout);
     }
 
-    private Component createHighlight(String title, String value, Double percentage) {
-        VaadinIcon icon = VaadinIcon.ARROW_UP;
-        String prefix = "";
-        String theme = "badge";
+    private Div createStatsCard(String title, String count) {
+        Div card = new Div();
+        card.addClassName("stats-card");
+        card.setWidth("200px");
 
-        if (percentage == 0) {
-            prefix = "±";
-        } else if (percentage > 0) {
-            prefix = "+";
-            theme += " success";
-        } else if (percentage < 0) {
-            icon = VaadinIcon.ARROW_DOWN;
-            theme += " error";
+        Span titleSpan = new Span(title);
+        titleSpan.addClassName("stats-title");
+
+        Span countSpan = new Span(count);
+        countSpan.addClassName("stats-count");
+
+        card.add(titleSpan, countSpan);
+        return card;
+    }
+
+    private List<Activity> getRecentActivities() {
+        // This should fetch real data in a real application
+        return Arrays.asList(
+                new Activity("John Doe", "Enrolled in Math 101"),
+                new Activity("Jane Smith", "Completed Chemistry 201"),
+                new Activity("John Doe", "Enrolled in Physics 101"),
+                new Activity("Mary Johnson", "Dropped Math 101"),
+                new Activity("Peter Brown", "Enrolled in English 101")
+        );
+    }
+
+    public static class Activity {
+        private String student;
+        private String action;
+
+        public Activity(String student, String action) {
+            this.student = student;
+            this.action = action;
         }
 
-        H2 h2 = new H2(title);
-        h2.addClassNames(FontWeight.NORMAL, Margin.NONE, TextColor.SECONDARY, FontSize.XSMALL);
+        public String getStudent() {
+            return student;
+        }
 
-        Span span = new Span(value);
-        span.addClassNames(FontWeight.SEMIBOLD, FontSize.XXXLARGE);
+        public void setStudent(String student) {
+            this.student = student;
+        }
 
-        Icon i = icon.create();
-        i.addClassNames(BoxSizing.BORDER, Padding.XSMALL);
+        public String getAction() {
+            return action;
+        }
 
-        Span badge = new Span(i, new Span(prefix + percentage.toString()));
-        badge.getElement().getThemeList().add(theme);
-
-        VerticalLayout layout = new VerticalLayout(h2, span, badge);
-        layout.addClassName(Padding.LARGE);
-        layout.setPadding(false);
-        layout.setSpacing(false);
-        return layout;
+        public void setAction(String action) {
+            this.action = action;
+        }
     }
-
-    private Component createViewEvents() {
-        // Header
-        Select year = new Select();
-        year.setItems("2011", "2012", "2013", "2014", "2015", "2016", "2017", "2018", "2019", "2020", "2021");
-        year.setValue("2021");
-        year.setWidth("100px");
-
-        HorizontalLayout header = createHeader("View events", "City/month");
-        header.add(year);
-
-        // Chart
-        Chart chart = new Chart(ChartType.AREASPLINE);
-        Configuration conf = chart.getConfiguration();
-        conf.getChart().setStyledMode(true);
-
-        XAxis xAxis = new XAxis();
-        xAxis.setCategories("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec");
-        conf.addxAxis(xAxis);
-
-        conf.getyAxis().setTitle("Values");
-
-        PlotOptionsAreaspline plotOptions = new PlotOptionsAreaspline();
-        plotOptions.setPointPlacement(PointPlacement.ON);
-        plotOptions.setMarker(new Marker(false));
-        conf.addPlotOptions(plotOptions);
-
-        conf.addSeries(new ListSeries("Berlin", 189, 191, 291, 396, 501, 403, 609, 712, 729, 942, 1044, 1247));
-        conf.addSeries(new ListSeries("London", 138, 246, 248, 348, 352, 353, 463, 573, 778, 779, 885, 887));
-        conf.addSeries(new ListSeries("New York", 65, 65, 166, 171, 293, 302, 308, 317, 427, 429, 535, 636));
-        conf.addSeries(new ListSeries("Tokyo", 0, 11, 17, 123, 130, 142, 248, 349, 452, 454, 458, 462));
-
-        // Add it all together
-        VerticalLayout viewEvents = new VerticalLayout(header, chart);
-        viewEvents.addClassName(Padding.LARGE);
-        viewEvents.setPadding(false);
-        viewEvents.setSpacing(false);
-        viewEvents.getElement().getThemeList().add("spacing-l");
-        return viewEvents;
-    }
-
-
-    private Component createResponseTimes() {
-        HorizontalLayout header = createHeader("Response times", "Average across all systems");
-
-        // Chart
-        Chart chart = new Chart(ChartType.PIE);
-        Configuration conf = chart.getConfiguration();
-        conf.getChart().setStyledMode(true);
-        chart.setThemeName("gradient");
-
-        DataSeries series = new DataSeries();
-        series.add(new DataSeriesItem("System 1", 12.5));
-        series.add(new DataSeriesItem("System 2", 12.5));
-        series.add(new DataSeriesItem("System 3", 12.5));
-        series.add(new DataSeriesItem("System 4", 12.5));
-        series.add(new DataSeriesItem("System 5", 12.5));
-        series.add(new DataSeriesItem("System 6", 12.5));
-        conf.addSeries(series);
-
-        // Add it all together
-        VerticalLayout serviceHealth = new VerticalLayout(header, chart);
-        serviceHealth.addClassName(Padding.LARGE);
-        serviceHealth.setPadding(false);
-        serviceHealth.setSpacing(false);
-        serviceHealth.getElement().getThemeList().add("spacing-l");
-        return serviceHealth;
-    }
-
-    private HorizontalLayout createHeader(String title, String subtitle) {
-        H2 h2 = new H2(title);
-        h2.addClassNames(FontSize.XLARGE, Margin.NONE);
-
-        Span span = new Span(subtitle);
-        span.addClassNames(TextColor.SECONDARY, FontSize.XSMALL);
-
-        VerticalLayout column = new VerticalLayout(h2, span);
-        column.setPadding(false);
-        column.setSpacing(false);
-
-        HorizontalLayout header = new HorizontalLayout(column);
-        header.setJustifyContentMode(FlexComponent.JustifyContentMode.BETWEEN);
-        header.setSpacing(false);
-        header.setWidthFull();
-        return header;
-    }
-
-
 }
