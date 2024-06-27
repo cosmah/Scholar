@@ -53,7 +53,7 @@ public class AddSubjects extends VerticalLayout {
                 Notification.show("Subject added successfully!", 1000, Notification.Position.MIDDLE);
                 clearFields();
             } catch (Exception e) {
-                logger.severe("Failed to add subject: " + e.getMessage());
+                logger.severe("Failed to add subject please try again: " + e.getMessage());
                 Notification.show("Failed to add subject: " + e.getMessage(), 3000, Notification.Position.MIDDLE);
             }
         });
