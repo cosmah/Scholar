@@ -5,22 +5,22 @@ import com.scholar.application.backend.repositories.academics.subjects.SubjectsR
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class SubjectService {
-    public final SubjectsRepo subjectsRepo;
+    private final SubjectsRepo subjectsRepo;
 
-    public SubjectService(SubjectsRepo subjectsRepo){
+    public SubjectService(SubjectsRepo subjectsRepo) {
         this.subjectsRepo = subjectsRepo;
     }
 
     @Transactional
-    public AddSujects saveSubject(AddSujects addSujects){
+    public AddSujects saveSubject(AddSujects addSujects) {
         return subjectsRepo.save(addSujects);
     }
 
-
-
-
-
+    public List<AddSujects> findAllSubjects() {
+        return subjectsRepo.findAll();
+    }
 }
-
