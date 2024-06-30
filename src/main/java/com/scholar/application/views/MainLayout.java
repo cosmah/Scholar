@@ -2,6 +2,7 @@ package com.scholar.application.views;
 
 import com.scholar.application.views.academics.subjects.AddSubjects;
 import com.scholar.application.views.dashboard.DashboardView;
+import com.scholar.application.views.staff.MainView;
 import com.scholar.application.views.staff.NewStaff;
 import com.scholar.application.views.students.Enroll;
 import com.vaadin.flow.component.applayout.AppLayout;
@@ -54,7 +55,7 @@ public class MainLayout extends AppLayout {
         nav.addItem(new SideNavItem("Dashboard", DashboardView.class, LineAwesomeIcon.CHART_AREA_SOLID.create()));
         nav.addItem(new SideNavItem("Enroll Student", Enroll.class, LineAwesomeIcon.PEOPLE_CARRY_SOLID.create()));
         nav.addItem(new SideNavItem("Add Subject", AddSubjects.class, LineAwesomeIcon.BOOK_SOLID.create()));
-        nav.addItem(new SideNavItem("Add Stuff", NewStaff.class, LineAwesomeIcon.PEOPLE_CARRY_SOLID.create()));
+        nav.addItem(new SideNavItem("Our Staff", MainView.class, LineAwesomeIcon.PEOPLE_CARRY_SOLID.create()));
         return nav;
     }
 

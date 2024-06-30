@@ -5,6 +5,8 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 
+import java.util.Date;
+
 @Entity
 public class Teacher {
     @Id
@@ -13,7 +15,7 @@ public class Teacher {
     private String surname;
     private String givenName;
     private String NIN;
-    private String DOB;
+    private Date DOB;
     private String contact1;
     private String contact2;
     private String role;
@@ -21,7 +23,7 @@ public class Teacher {
     public Teacher() {
     }
 
-    public Teacher(Long id, String surname, String givenName, String NIN, String DOB, String contact1, String contact2, String role) {
+    public Teacher(Long id, String surname, String givenName, String NIN, Date DOB, String contact1, String contact2, String role) {
         this.id = id;
         this.surname = surname;
         this.givenName = givenName;
@@ -64,11 +66,11 @@ public class Teacher {
         this.NIN = NIN;
     }
 
-    public String getDOB() {
+    public Date getDOB() {
         return DOB;
     }
 
-    public void setDOB(String DOB) {
+    public void setDOB(Date DOB) {
         this.DOB = DOB;
     }
 

@@ -23,4 +23,14 @@ public class TeacherService {
     public List<Teacher> findAllTeachers() {
         return staffRepo.findAll();
     }
+
+
+    public List<Teacher> findAll(String stringFilter) {
+        if (stringFilter == null || stringFilter.isEmpty()) {
+            return staffRepo.findAll();
+        } else {
+            return staffRepo.search(stringFilter);
+        }
+    }
+
 }
