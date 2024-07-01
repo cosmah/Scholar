@@ -3,6 +3,7 @@ package com.scholar.application.views.staff;
 import com.scholar.application.backend.entities.staff.register.Teacher;
 import com.scholar.application.backend.services.staff.register.TeacherService;
 import com.scholar.application.views.MainLayout;
+import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -14,6 +15,7 @@ import com.vaadin.flow.router.Route;
 
 @PageTitle("Our Staff")
 @Route(value = "enroll/staff", layout = MainLayout.class)
+@CssImport("./styles/shared-styles.css")
 public class MainView extends VerticalLayout {
 
     private Grid<Teacher> grid = new Grid<>(Teacher.class);
@@ -26,11 +28,12 @@ public class MainView extends VerticalLayout {
         setSizeFull();
         configureGrid();
         configureFilter();
+
         form = new NewStaff();
         Div content = new Div(grid, form);
         content.addClassName("content");
         content.setSizeFull();
-        add(filterText, grid);
+        add(filterText, content);
         updateList();
 
 
