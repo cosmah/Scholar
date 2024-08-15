@@ -36,7 +36,7 @@ public class MainView extends VerticalLayout {
         add(filterText, content);
         updateList();
 
-
+        closeEditor();
     }
 
     private void configureFilter() {
@@ -44,8 +44,25 @@ public class MainView extends VerticalLayout {
         filterText.setClearButtonVisible(true);
         filterText.setValueChangeMode(ValueChangeMode.LAZY);
         filterText.addValueChangeListener(e -> updateList());
+        grid.asSingleSelect().addValueChangeListener(event ->
+                editTeacher(event.getValue()));
     }
 
+
+    public void editTeacher(Teacher teacher) {
+        if (teacher == null) {
+            closeEditor();
+        } else {
+            form.setContact(teacher);
+            form.setVisible(true);
+            addClassName("editing");
+        }
+    }
+    private void closeEditor() {
+        form.setContact(null);
+        form.setVisible(false);
+        removeClassName("editing");
+    }
 
 
     private void configureGrid() {

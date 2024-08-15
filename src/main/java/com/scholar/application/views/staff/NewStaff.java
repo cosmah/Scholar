@@ -66,7 +66,6 @@ public class NewStaff extends FormLayout {
         close.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
         save.addClickShortcut(Key.ENTER);
         close.addClickShortcut(Key.ESCAPE);
-        return new HorizontalLayout(save, delete, close);
 
         save.addClickListener(event -> validateAndSave());
         delete.addClickListener(event -> fireEvent(new DeleteEvent(this, teacher)));
