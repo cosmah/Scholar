@@ -15,10 +15,17 @@ public class TeacherService {
         this.staffRepo = staffRepo;
     }
 
+
     @Transactional
-    public Teacher saveTeacher(Teacher teacher){
+    public Teacher save(Teacher teacher) {
         return staffRepo.save(teacher);
     }
+
+    @Transactional
+    public void delete(Teacher teacher) {
+        staffRepo.delete(teacher);
+    }
+
 
     public List<Teacher> findAllTeachers() {
         return staffRepo.findAll();

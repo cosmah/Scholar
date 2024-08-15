@@ -12,7 +12,6 @@ import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 
-
 @PageTitle("Our Staff")
 @Route(value = "enroll/staff", layout = MainLayout.class)
 @CssImport("./styles/shared-styles.css")
@@ -22,6 +21,7 @@ public class MainView extends VerticalLayout {
     private TeacherService teacherService;
     private TextField filterText = new TextField();
     private NewStaff form;
+
     public MainView(TeacherService teacherService) {
         this.teacherService = teacherService;
         addClassName("list-view");
@@ -30,6 +30,10 @@ public class MainView extends VerticalLayout {
         configureFilter();
 
         form = new NewStaff();
+        form.addListener(NewStaff.SaveEvent.class, this::saveTeacher);
+        form.addListener(NewStaff.DeleteEvent.class, this::deleteTeacher);
+        form.addListener(NewStaff.CloseEvent.class, e -> closeEditor());
+
         Div content = new Div(grid, form);
         content.addClassName("content");
         content.setSizeFull();
@@ -44,8 +48,19 @@ public class MainView extends VerticalLayout {
         filterText.setClearButtonVisible(true);
         filterText.setValueChangeMode(ValueChangeMode.LAZY);
         filterText.addValueChangeListener(e -> updateList());
-        grid.asSingleSelect().addValueChangeListener(event ->
-                editTeacher(event.getValue()));
+        grid.asSingleSelect().addValueChangeListener(event -> editTeacher(event.getValue()));
+    }
+
+    private void saveTeacher(NewStaff.SaveEvent event) {
+        teacherService.save(event.getTeacher()); // Updated method call
+        updateList();
+        closeEditor();
+    }
+
+    private void deleteTeacher(NewStaff.DeleteEvent event) {
+        teacherService.delete(event.getTeacher());
+        updateList();
+        closeEditor();
     }
 
 
@@ -58,12 +73,12 @@ public class MainView extends VerticalLayout {
             addClassName("editing");
         }
     }
+
     private void closeEditor() {
         form.setContact(null);
         form.setVisible(false);
         removeClassName("editing");
     }
-
 
     private void configureGrid() {
         grid.addClassName("staff-grid");
@@ -75,5 +90,4 @@ public class MainView extends VerticalLayout {
     private void updateList() {
         grid.setItems(teacherService.findAll(filterText.getValue()));
     }
-
-    }
+}
