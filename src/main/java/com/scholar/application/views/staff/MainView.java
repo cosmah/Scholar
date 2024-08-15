@@ -86,13 +86,14 @@ public class MainView extends VerticalLayout {
 
     public void editTeacher(Teacher teacher) {
         if (teacher == null) {
-            closeEditor();
+            closeEditor(); // Close the editor if no teacher is selected
         } else {
-            form.setContact(teacher);
-            form.setVisible(true);
-            addClassName("editing");
+            form.setContact(teacher); // Set the selected teacher in the form
+            form.setVisible(true); // Make the form visible
+            addClassName("editing"); // Add a class to indicate editing mode
         }
     }
+
 
     private void closeEditor() {
         form.setContact(null);
@@ -105,7 +106,11 @@ public class MainView extends VerticalLayout {
         grid.setSizeFull();
         grid.setColumns("surname", "givenName", "NIN", "DOB", "contact1", "contact2", "role");
         grid.getColumns().forEach(col -> col.setAutoWidth(true));
+
+        // Add a listener for row selection
+        grid.asSingleSelect().addValueChangeListener(event -> editTeacher(event.getValue()));
     }
+
 
     private void updateList() {
         grid.setItems(teacherService.findAll(filterText.getValue()));
