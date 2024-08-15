@@ -3,9 +3,11 @@ package com.scholar.application.views.staff;
 import com.scholar.application.backend.entities.staff.register.Teacher;
 import com.scholar.application.backend.services.staff.register.TeacherService;
 import com.scholar.application.views.MainLayout;
+import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.value.ValueChangeMode;
@@ -26,10 +28,10 @@ public class MainView extends VerticalLayout {
         this.teacherService = teacherService;
         addClassName("list-view");
         setSizeFull();
-        configureGrid();
-        configureFilter();
+        configureGrid(); // Configure the grid
+        form = new NewStaff(); // Initialize the form
 
-        form = new NewStaff();
+        // Add listeners for the form events
         form.addListener(NewStaff.SaveEvent.class, this::saveTeacher);
         form.addListener(NewStaff.DeleteEvent.class, this::deleteTeacher);
         form.addListener(NewStaff.CloseEvent.class, e -> closeEditor());
@@ -37,19 +39,37 @@ public class MainView extends VerticalLayout {
         Div content = new Div(grid, form);
         content.addClassName("content");
         content.setSizeFull();
-        add(filterText, content);
-        updateList();
 
-        closeEditor();
+        // Add the toolbar and content to the main layout
+        add(getToolbar(), content);
+        updateList(); // Update the list of teachers
+
+        closeEditor(); // Close the editor initially
     }
 
-    private void configureFilter() {
+
+    private HorizontalLayout getToolbar() {
         filterText.setPlaceholder("Filter by name...");
         filterText.setClearButtonVisible(true);
         filterText.setValueChangeMode(ValueChangeMode.LAZY);
         filterText.addValueChangeListener(e -> updateList());
-        grid.asSingleSelect().addValueChangeListener(event -> editTeacher(event.getValue()));
+
+        // Create the "Add Contact" button
+        Button addTeacherButton = new Button("Add Teacher");
+        addTeacherButton.addClickListener(click -> addTeacher()); // Call the addTeacher method when clicked
+
+        // Create a HorizontalLayout to wrap the filter text field and the button
+        HorizontalLayout toolbar = new HorizontalLayout(filterText, addTeacherButton);
+        toolbar.addClassName("toolbar");
+        return toolbar; // Return the toolbar layout
     }
+
+    private void addTeacher() {
+        grid.asSingleSelect().clear(); // Clear any selected item in the grid
+        editTeacher(new Teacher()); // Open the editor for a new Teacher object
+    }
+
+
 
     private void saveTeacher(NewStaff.SaveEvent event) {
         teacherService.save(event.getTeacher()); // Updated method call
